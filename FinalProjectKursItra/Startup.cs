@@ -41,8 +41,16 @@ namespace FinalProjectKursItra
             services.AddControllersWithViews();
 
             services.AddRazorPages();
-
-           
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            });
+       /* services.AddAuthentication().AddTwitter(twitterOptions =>
+            {
+                twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
+                twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+            });*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
