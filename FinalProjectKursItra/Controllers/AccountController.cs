@@ -42,9 +42,9 @@ namespace FinalProjectKursItra.Controllers
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
+            ViewData["Title"] = "Login";
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View("Login");
         }
 
         [HttpPost]

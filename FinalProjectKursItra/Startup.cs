@@ -40,12 +40,9 @@ namespace FinalProjectKursItra
               .AddDefaultTokenProviders();
             services.AddControllersWithViews();
 
-            services.AddMvc();
+            services.AddRazorPages();
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new RequireHttpsAttribute());
-            });
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,9 +56,8 @@ namespace FinalProjectKursItra
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
             }
-            app.UseHttpsRedirection();
+         
             app.UseStaticFiles();
 
             app.UseRouting();
