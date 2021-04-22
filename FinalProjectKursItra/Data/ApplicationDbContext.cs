@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using FinalProjectKursItra.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,9 @@ namespace FinalProjectKursItra.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+        }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<UserInformation> UserInformation { get; set; }
+       
         }
     }
-}
