@@ -17,7 +17,7 @@ namespace FinalProjectKursItra
     {
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args);
+            var host = BuildWebHost(args);
 
             using (var scope = host.Services.CreateScope())
             {
@@ -39,7 +39,7 @@ namespace FinalProjectKursItra
 
         }
 
-        public static IWebHost CreateHostBuilder(string[] args) =>
+        public static IWebHost BuildWebHost(string[] args) =>
       WebHost.CreateDefaultBuilder(args)
           .UseStartup<Startup>()
           .Build();
