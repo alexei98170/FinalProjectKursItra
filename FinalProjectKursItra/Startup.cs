@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using FinalProjectKursItra.Service;
 
 namespace FinalProjectKursItra
 {
@@ -39,7 +40,7 @@ namespace FinalProjectKursItra
                 .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
             services.AddControllersWithViews();
-
+            services.AddTransient<EmailService, EmailService>();
             services.AddRazorPages();
             services.AddAuthentication().AddFacebook(facebookOptions =>
             {

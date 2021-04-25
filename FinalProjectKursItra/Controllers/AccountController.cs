@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using FinalProjectKursItra.Models;
 using FinalProjectKursItra.Models.AccountViewModels;
+using FinalProjectKursItra.Service;
 
 namespace FinalProjectKursItra.Controllers
 {
@@ -58,7 +59,11 @@ namespace FinalProjectKursItra.Controllers
                 var user = await _userManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
-
+                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        ModelState.AddModelError(string.Empty, "Your email is not verified");
+                        return View(model);
+                    }
                     if (user.IsBlocked == true)
                     {
                         ModelState.AddModelError(string.Empty, "Your account has been blocked.");
@@ -107,8 +112,18 @@ namespace FinalProjectKursItra.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Account",
+                        new { userId = user.Id, code = code },
+                        protocol: HttpContext.Request.Scheme);
+                    EmailService emailService = new EmailService();
+                    await emailService.SendEmailAsync(model.Email, "Verify your account",
+                        $"Confirm the registration by clicking on the link: <a href='{callbackUrl}'>link</a>");
                     await _userManager.AddToRoleAsync(user, "member");
-                    return View("RegistrationCompleted");
+
+                    return View("Confirmation");
                 }
                 AddErrors(result);
             }
@@ -122,6 +137,22 @@ namespace FinalProjectKursItra.Controllers
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{userId}'.");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
         [HttpPost]
         [AllowAnonymous]
