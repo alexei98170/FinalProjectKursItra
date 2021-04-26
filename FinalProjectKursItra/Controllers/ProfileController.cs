@@ -22,7 +22,7 @@ namespace FinalProjectKursItra.Controllers
         // GET: Profile
         public async Task<IActionResult> Index()
         {
-            return View(await _context.UserInformation.ToListAsync());
+            return View(await _context.UserInformations.ToListAsync());
         }
 
         // GET: Profile/Details/5
@@ -33,7 +33,7 @@ namespace FinalProjectKursItra.Controllers
                 return NotFound();
             }
 
-            var userInformation = await _context.UserInformation
+            var userInformation = await _context.UserInformations
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userInformation == null)
             {
@@ -73,7 +73,7 @@ namespace FinalProjectKursItra.Controllers
                 return NotFound();
             }
 
-            var userInformation = await _context.UserInformation.FindAsync(id);
+            var userInformation = await _context.UserInformations.FindAsync(id);
             if (userInformation == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace FinalProjectKursItra.Controllers
                 return NotFound();
             }
 
-            var userInformation = await _context.UserInformation
+            var userInformation = await _context.UserInformations
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userInformation == null)
             {
@@ -139,15 +139,15 @@ namespace FinalProjectKursItra.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var userInformation = await _context.UserInformation.FindAsync(id);
-            _context.UserInformation.Remove(userInformation);
+            var userInformation = await _context.UserInformations.FindAsync(id);
+            _context.UserInformations.Remove(userInformation);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserInformationExists(long id)
         {
-            return _context.UserInformation.Any(e => e.Id == id);
+            return _context.UserInformations.Any(e => e.Id == id);
         }
     }
 }

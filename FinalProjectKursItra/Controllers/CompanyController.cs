@@ -7,12 +7,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinalProjectKursItra.Data;
 using FinalProjectKursItra.Models;
+using FinalProjectKursItra.ViewModels;
+using HeyRed.MarkdownSharp;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectKursItra.Controllers
 {
     public class CompanyController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        Markdown mark = new Markdown(new MarkdownOptions
+        {
+            AutoHyperlink = true,
+            AutoNewLines = true,
+            LinkEmails = true,
+            QuoteSingleLine = true,
+            StrictBoldItalic = true
+        });
 
         public CompanyController(ApplicationDbContext context)
         {
@@ -22,132 +37,229 @@ namespace FinalProjectKursItra.Controllers
         // GET: Company
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Company.ToListAsync());
-        }
-
-        // GET: Company/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            List<Company> toDelete = _context.Companys.Where(i => i.Saved == false).ToList();
+            foreach (Company man in toDelete)
             {
-                return NotFound();
+                DelEmptyTags(man.CompanyId, _context);
+                _context.Companys.Remove(man);
+            }
+            _context.SaveChanges();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            return View(user);
+        }
+            // GET: Company/Details/5
+            public async Task<IActionResult> Details(int? id)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var company = await _context.Companys
+                    .FirstOrDefaultAsync(m => m.CompanyId == id);
+                if (company == null)
+                {
+                    return NotFound();
+                }
+
+                return View(company);
             }
 
-            var company = await _context.Company
-                .FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (company == null)
+            // GET: Company/Create
+
+            // POST: Company/Create
+            // To protect from overposting attacks, enable the specific properties you want to bind to.
+            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public ActionResult Create(string id)
             {
-                return NotFound();
+                CreateViewModel model = new CreateViewModel()
+                {
+                    Company = null,
+                    AuthorId = id,
+
+                    Tags = new List<string>()
+                };
+                return View(model);
+            }
+            [HttpPost]
+            [ActionName("CreateManual")]
+            public ActionResult CreateManual(CreateCompanyViewModel model)
+            {
+                CreateViewModel newModel = new CreateViewModel()
+                {
+                    Company = null,
+                    AuthorId = null,
+                    Tags = null,
+                };
+
+                if (
+                    (model.Title != null) &&
+                    (model.Title != "") &&
+                    (model.Description != null) &&
+                    (model.Description != "") &&
+                    (model.Tags != null) &&
+                    (model.Tags != "")
+                )
+                {
+                    Company manual = new Company()
+                    {
+                        AuthorId = model.AuthorId,
+                        Title = mark.Transform(model.Title),
+                        Description = mark.Transform(model.Description),
+                        Photo = model.Photo,
+                        Category = model.Category,
+                        ReleaseDate = DateTime.Now,
+                        LastUpdate = DateTime.Now
+                    };
+
+                    EntityEntry<Company> e = _context.Companys.Add(manual);
+                    _context.SaveChanges();
+                    Company i = e.Entity;
+
+
+                    string[] tags = null;
+                    if ((model?.Tags != null) && (model.Tags.Split(',').Count() > 0))
+                    {
+                        tags = model.Tags.Split(',');
+                        foreach (string t in tags)
+                        {
+                            if (t != "")
+                            {
+                                Tag fTag = null;
+
+                                if (_context.Tags.Where(dt => dt.Name == t).ToList().Count != 0)
+                                {
+                                    fTag = _context.Tags.Where(dt => dt.Name == t).ToList().First();
+                                }
+
+                                if (fTag != null)
+                                {
+                                    _context.CompanyTags.Add(new CompanyTag() { TagId = fTag.TagId, CompanyId = i.CompanyId });
+                                }
+                                else
+                                {
+                                    EntityEntry<Tag> added = _context.Tags.Add(new Tag() { Name = t });
+                                    _context.SaveChanges();
+                                    Tag aTag = added.Entity;
+                                    _context.CompanyTags.Add(new CompanyTag() { TagId = aTag.TagId, CompanyId = i.CompanyId });
+                                }
+                            }
+                        }
+                    }
+
+                    newModel = new CreateViewModel()
+                    {
+                        Company = i,
+                        AuthorId = i.AuthorId,
+                        Tags = tags.ToList(),
+
+                    };
+                    manual.Saved = true;
+                    _context.SaveChanges();
+                }
+
+                return View("Create", newModel);
             }
 
-            return View(company);
-        }
-
-        // GET: Company/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Company/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CompanyId,AuthorId,Title,Description,Photo,Category,Saved,ReleaseDate,LastUpdate,RatesAmount,RatesCount")] Company company)
-        {
-            if (ModelState.IsValid)
+            public async Task<IActionResult> Edit(int? id)
             {
-                _context.Add(company);
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var company = await _context.Companys.FindAsync(id);
+                if (company == null)
+                {
+                    return NotFound();
+                }
+                return View(company);
+            }
+
+            // POST: Company/Edit/5
+            // To protect from overposting attacks, enable the specific properties you want to bind to.
+            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> Edit(int id, [Bind("CompanyId,AuthorId,Title,Description,Photo,Category,Saved,ReleaseDate,LastUpdate,RatesAmount,RatesCount")] Company company)
+            {
+                if (id != company.CompanyId)
+                {
+                    return NotFound();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(company);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!CompanyExists(company.CompanyId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(company);
+            }
+
+            // GET: Company/Delete/5
+            public async Task<IActionResult> Delete(int? id)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var company = await _context.Companys
+                    .FirstOrDefaultAsync(m => m.CompanyId == id);
+                if (company == null)
+                {
+                    return NotFound();
+                }
+
+                return View(company);
+            }
+
+            // POST: Company/Delete/5
+            [HttpPost, ActionName("Delete")]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> DeleteConfirmed(int id)
+            {
+                var company = await _context.Companys.FindAsync(id);
+                _context.Companys.Remove(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
-        }
-
-        // GET: Company/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        private void DelEmptyTags(int id, ApplicationDbContext context)
         {
-            if (id == null)
+            List<CompanyTag> manualTags = CompanyHelper.GetManualTags(id, context);
+            foreach (CompanyTag mTag in manualTags)
             {
-                return NotFound();
-            }
-
-            var company = await _context.Company.FindAsync(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Company/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,AuthorId,Title,Description,Photo,Category,Saved,ReleaseDate,LastUpdate,RatesAmount,RatesCount")] Company company)
-        {
-            if (id != company.CompanyId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (CompanyHelper.CountSameNameManualTags(mTag.CompanyTagId, context) < 2)
                 {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
+                    context.Tags.Remove(context.Tags.Find(mTag.TagId));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.CompanyId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            context.SaveChanges();
         }
-
-        // GET: Company/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Company
-                .FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
-        }
-
-        // POST: Company/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var company = await _context.Company.FindAsync(id);
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool CompanyExists(int id)
-        {
-            return _context.Company.Any(e => e.CompanyId == id);
+            {
+                return _context.Companys.Any(e => e.CompanyId == id);
+            }
         }
-    }
-}
+    } 

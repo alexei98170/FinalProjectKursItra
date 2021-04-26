@@ -14,12 +14,15 @@ namespace FinalProjectKursItra.Data
         {
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<UserInformation> UserInformation { get; set; }
+        public DbSet<UserInformation> UserInformations { get; set; }
+        public DbSet<Company> Companys{ get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<CompanyTag> CompanyTags { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
         }
-        public DbSet<FinalProjectKursItra.Models.Company> Company { get; set; }
+        
 
     }
     }

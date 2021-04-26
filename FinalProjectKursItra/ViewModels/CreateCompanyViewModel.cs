@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalProjectKursItra.ViewModels
 {
-    public class CreateManualViewModel
+    public class CreateCompanyViewModel
     {
         [Required(ErrorMessage = "You have entered incorrect data")]
         public string AuthorId { get; set; }
