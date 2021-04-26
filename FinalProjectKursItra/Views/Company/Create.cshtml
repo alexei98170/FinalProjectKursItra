@@ -1,0 +1,15 @@
+﻿@model FinalProjectKursItra.ViewModels.CreateViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+<h2>Create Task</h2>
+<a asp-action="Index">Back</a>
+<hr />
+@{
+    string id = Model.AuthorId;
+}
+<div class="row">
+    @{
+        Html.RenderPartial("_CreateCompany", new FinalProjectKursItra.ViewModels.CreateManualViewModel() { AuthorId = id, });
+    }
+</div>

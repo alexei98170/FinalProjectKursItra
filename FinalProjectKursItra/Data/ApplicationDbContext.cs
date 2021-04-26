@@ -19,6 +19,7 @@ namespace FinalProjectKursItra.Data
         {
             base.OnModelCreating(builder);
         }
+        public DbSet<FinalProjectKursItra.Models.Company> Company { get; set; }
 
     }
     }
