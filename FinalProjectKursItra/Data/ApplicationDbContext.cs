@@ -12,12 +12,15 @@ namespace FinalProjectKursItra.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<UserInformation> UserInformations { get; set; }
-        public DbSet<Company> Companys{ get; set; }
+        public DbSet<Company> Companies{ get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<CompanyTag> CompanyTags { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

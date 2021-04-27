@@ -11,7 +11,6 @@ using FinalProjectKursItra.ViewModels;
 using HeyRed.MarkdownSharp;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectKursItra.Controllers
 {
@@ -29,19 +28,23 @@ namespace FinalProjectKursItra.Controllers
             StrictBoldItalic = true
         });
 
-        public CompanyController(ApplicationDbContext context)
+        public CompanyController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _context = dbContext;
         }
 
         // GET: Company
         public async Task<IActionResult> Index()
         {
-            List<Company> toDelete = _context.Companys.Where(i => i.Saved == false).ToList();
+            List<Company> toDelete = _context.Companies.Where(i => i.Saved == false).ToList();
             foreach (Company man in toDelete)
             {
                 DelEmptyTags(man.CompanyId, _context);
-                _context.Companys.Remove(man);
+                _context.Companies.Remove(man);
             }
             _context.SaveChanges();
             var user = await _userManager.GetUserAsync(User);
@@ -49,9 +52,9 @@ namespace FinalProjectKursItra.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            return View(user);
+            return View();
         }
-            // GET: Company/Details/5
+           
             public async Task<IActionResult> Details(int? id)
             {
                 if (id == null)
@@ -59,7 +62,7 @@ namespace FinalProjectKursItra.Controllers
                     return NotFound();
                 }
 
-                var company = await _context.Companys
+                var company = await _context.Companies
                     .FirstOrDefaultAsync(m => m.CompanyId == id);
                 if (company == null)
                 {
@@ -69,11 +72,7 @@ namespace FinalProjectKursItra.Controllers
                 return View(company);
             }
 
-            // GET: Company/Create
-
-            // POST: Company/Create
-            // To protect from overposting attacks, enable the specific properties you want to bind to.
-            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
             [HttpPost]
             [ValidateAntiForgeryToken]
             public ActionResult Create(string id)
@@ -88,8 +87,8 @@ namespace FinalProjectKursItra.Controllers
                 return View(model);
             }
             [HttpPost]
-            [ActionName("CreateManual")]
-            public ActionResult CreateManual(CreateCompanyViewModel model)
+            [ActionName("CreateCompany")]
+            public ActionResult CreateCompany(CreateCompanyViewModel model)
             {
                 CreateViewModel newModel = new CreateViewModel()
                 {
@@ -118,7 +117,7 @@ namespace FinalProjectKursItra.Controllers
                         LastUpdate = DateTime.Now
                     };
 
-                    EntityEntry<Company> e = _context.Companys.Add(manual);
+                    EntityEntry<Company> e = _context.Companies.Add(manual);
                     _context.SaveChanges();
                     Company i = e.Entity;
 
@@ -174,7 +173,7 @@ namespace FinalProjectKursItra.Controllers
                     return NotFound();
                 }
 
-                var company = await _context.Companys.FindAsync(id);
+                var company = await _context.Companies.FindAsync(id);
                 if (company == null)
                 {
                     return NotFound();
@@ -182,9 +181,7 @@ namespace FinalProjectKursItra.Controllers
                 return View(company);
             }
 
-            // POST: Company/Edit/5
-            // To protect from overposting attacks, enable the specific properties you want to bind to.
-            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+         
             [HttpPost]
             [ValidateAntiForgeryToken]
             public async Task<IActionResult> Edit(int id, [Bind("CompanyId,AuthorId,Title,Description,Photo,Category,Saved,ReleaseDate,LastUpdate,RatesAmount,RatesCount")] Company company)
@@ -225,7 +222,7 @@ namespace FinalProjectKursItra.Controllers
                     return NotFound();
                 }
 
-                var company = await _context.Companys
+                var company = await _context.Companies
                     .FirstOrDefaultAsync(m => m.CompanyId == id);
                 if (company == null)
                 {
@@ -240,8 +237,8 @@ namespace FinalProjectKursItra.Controllers
             [ValidateAntiForgeryToken]
             public async Task<IActionResult> DeleteConfirmed(int id)
             {
-                var company = await _context.Companys.FindAsync(id);
-                _context.Companys.Remove(company);
+                var company = await _context.Companies.FindAsync(id);
+                _context.Companies.Remove(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -259,7 +256,7 @@ namespace FinalProjectKursItra.Controllers
         }
         private bool CompanyExists(int id)
             {
-                return _context.Companys.Any(e => e.CompanyId == id);
+                return _context.Companies.Any(e => e.CompanyId == id);
             }
         }
     } 

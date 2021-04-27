@@ -10,7 +10,7 @@ namespace FinalProjectKursItra.Models
     {
         public static List<string> GetAllManualTags(int companyId, ApplicationDbContext context)
         {
-            Company company = context.Companys.Find(companyId);
+            Company company = context.Companies.Find(companyId);
             List<CompanyTag> companyTags = context.CompanyTags.Where(t => t.CompanyId == companyId).ToList();
             List<string> tags = new List<string>();
             foreach (CompanyTag man in companyTags)
@@ -23,7 +23,7 @@ namespace FinalProjectKursItra.Models
       
         public static List<CompanyTag> GetManualTags(int companyId, ApplicationDbContext context)
         {
-            Company company = context.Companys.Find(companyId);
+            Company company = context.Companies.Find(companyId);
             List<CompanyTag> manualTags = context.CompanyTags.Where(t => t.CompanyId == companyId).ToList();
             return manualTags;
         }
