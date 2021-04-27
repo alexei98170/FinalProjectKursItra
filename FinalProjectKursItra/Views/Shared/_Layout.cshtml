@@ -27,7 +27,7 @@
                         <ul class="nav navbar-nav">
                             @if (User.IsInRole("member"))
                             {
-                                <li><a asp-area="" asp-controller="Company" asp-action="Index">Create Company</a></li>
+                                <li><a asp-area="" asp-controller="Company" asp-action="Index">My Company</a></li>
                             }
                             @if (User.IsInRole("admin"))
                             {

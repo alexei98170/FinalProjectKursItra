@@ -15,5 +15,7 @@ namespace FinalProjectKursItra.Models
 
         public string Information { get; set; }
 
+        public int Age { get; set; }
+
     }
 }

@@ -8,29 +8,19 @@
 @model FinalProjectKursItra.Models.ApplicationUser
 @{ ViewData["Title"] = "Index"; }
 
-<div class="row" style="margin-top: 10px;">
-    <div class="col-sm-6 col-md-3">
-        <div class="thumbnail">
-            <div class="caption">
-                <h3 style="text-align:center">@Model.UserName</h3>
-                <p>
-                    <h5 style="display: inline-block; font-weight:bold">Email:</h5>
-                    <h5 style="display: inline-block; margin-left:10px">@Model.Email</h5>
-                </p>
-            </div>
-        </div>
-    </div>
     <div class="col-md-7">
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">Your tasks</h3>
             </div>
             <table class="table">
-                @{ var companys = db.Companies.Where(company => company.AuthorId == Model.Id); }
-                @foreach (Company company in companys)
+                @{ var companys = db.Companies.Where(company => company.AuthorId == Model.Id); 
+                    if companys != null
+                        }
+                @foreach (var company in companys)
                 {
     <tr>
-        <td><a asp-controller="Home" asp-action="Manual" asp-route-id="@company.CompanyId">@Html.Raw(company.Title)</a></td>
+        <td><a asp-controller="Home" asp-action="Company" asp-route-id="@company.CompanyId">@Html.Raw(company.Title)</a></td>
         <td>
             <form method="post">
                 <div class="dropdown">

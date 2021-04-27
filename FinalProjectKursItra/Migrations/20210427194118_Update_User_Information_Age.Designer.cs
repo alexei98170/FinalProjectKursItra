@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectKursItra.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210427113213_AddDb")]
-    partial class AddDb
+    [Migration("20210427194118_Update_User_Information_Age")]
+    partial class Update_User_Information_Age
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,6 +89,33 @@ namespace FinalProjectKursItra.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("FinalProjectKursItra.Models.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VoteCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("FinalProjectKursItra.Models.Company", b =>
                 {
                     b.Property<int>("CompanyId")
@@ -149,6 +176,27 @@ namespace FinalProjectKursItra.Migrations
                     b.ToTable("CompanyTags");
                 });
 
+            modelBuilder.Entity("FinalProjectKursItra.Models.Like", b =>
+                {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LikeId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("FinalProjectKursItra.Models.Tag", b =>
                 {
                     b.Property<int>("TagId")
@@ -170,6 +218,9 @@ namespace FinalProjectKursItra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
 
                     b.Property<string>("Information")
                         .HasColumnType("nvarchar(max)");

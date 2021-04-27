@@ -40,18 +40,16 @@ namespace FinalProjectKursItra.Controllers
         // GET: Company
         public async Task<IActionResult> Index()
         {
-            List<Company> toDelete = _context.Companies.Where(i => i.Saved == false).ToList();
-            foreach (Company man in toDelete)
+            var companies = _context.Companies.Where(i => i.Saved == false).ToList();
+
+            foreach (Company man in companies)
             {
                 DelEmptyTags(man.CompanyId, _context);
                 _context.Companies.Remove(man);
             }
+
             _context.SaveChanges();
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+
             return View();
         }
            
@@ -90,12 +88,7 @@ namespace FinalProjectKursItra.Controllers
             [ActionName("CreateCompany")]
             public ActionResult CreateCompany(CreateCompanyViewModel model)
             {
-                CreateViewModel newModel = new CreateViewModel()
-                {
-                    Company = null,
-                    AuthorId = null,
-                    Tags = null,
-                };
+                CreateViewModel newModel = new CreateViewModel();
 
                 if (
                     (model.Title != null) &&
