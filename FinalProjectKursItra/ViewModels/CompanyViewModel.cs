@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalProjectKursItra.Data;
 
-namespace ManualsSite.ViewModels
+namespace FinalProjectKursItra.ViewModels
 {
     public class CompanyViewModel
     {

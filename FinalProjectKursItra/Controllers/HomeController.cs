@@ -1,7 +1,7 @@
 ﻿using FinalProjectKursItra.Data;
 using FinalProjectKursItra.Models;
+using FinalProjectKursItra.ViewModels;
 using HeyRed.MarkdownSharp;
-using ManualsSite.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

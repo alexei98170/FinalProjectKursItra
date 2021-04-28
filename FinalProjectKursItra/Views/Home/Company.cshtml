@@ -5,32 +5,44 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject ApplicationDbContext db
 @{
-    ViewData["Title"] = "Manual";
+    ViewData["Title"] = "Company";
 }
-<div class="panel panel-default">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-2">
-                <div class="thumbnail" style="height: 140px; width:140px">
-                    <img id="photo" style="height: 130px; width: 130px" src="@Model.Company.Photo">
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Company</title>
+</head>
+<body>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="thumbnail" style="height: 140px; width:140px">
+                        <img id="photo" style="height: 130px; width: 130px" src="@Model.Company.Photo">
+                    </div>
+                    <h5 style="color:deepskyblue;">@Model.Company.ReleaseDate</h5>
                 </div>
-                <h5 style="color:deepskyblue;">@Model.Company.ReleaseDate</h5>
+                <div class="col-md-10">
+                    <h2>@Html.Raw(@Model.Company.Title)</h2>
+                    <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
+                        <h4>Categories: @Html.DisplayFor(modelItem => Model.Company.Category)</h4>
+                    </a>
+                    <hr />
+                    @foreach (string tag in Model.Tags)
+                    {
+                        <button class="btn btn-info btn-sm">@tag</button>
+                    }
+                    <hr />
+                    <h5>@Html.Raw(@Model.Company.Description)</h5>
+                </div>
             </div>
-            <div class="col-md-10">
-                <h2>@Html.Raw(@Model.Company.Title)</h2>
-                <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
-                    <h4>Categories: @Html.DisplayFor(modelItem => Model.Company.Category)</h4>
-                </a>
-                <hr />
-                @foreach (string tag in Model.Tags)
-                {
-                    <button class="btn btn-info btn-sm">@tag</button>
-                }
-                <hr />
-                <h5>@Html.Raw(@Model.Company.Description)</h5>
-            </div>
+
         </div>
-
+        <a asp-action="Index">Back to List</a>
     </div>
-</div>
-
+</body>
+</html>
