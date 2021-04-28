@@ -41,7 +41,7 @@ namespace FinalProjectKursItra.Controllers
         public async Task<IActionResult> Index()
         {
             var companies = _context.Companies.Where(i => i.Saved == false).ToList();
-
+            
             foreach (Company man in companies)
             {
                 DelEmptyTags(man.CompanyId, _context);
@@ -50,7 +50,9 @@ namespace FinalProjectKursItra.Controllers
 
             _context.SaveChanges();
 
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+
+            return View(user);
         }
            
             public async Task<IActionResult> Details(int? id)
