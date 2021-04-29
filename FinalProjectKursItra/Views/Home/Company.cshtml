@@ -40,7 +40,9 @@
                     <h5>@Html.Raw(@Model.Company.Description)</h5>
                 </div>
             </div>
+            <a asp-controller="Comments" asp-action="Create">Create Comments</a>
 
+            @{await Html.RenderPartialAsync("/Views/Home/_Comments.cshtml", Model.Comments);}
         </div>
         <a asp-action="Index">Back to List</a>
     </div>

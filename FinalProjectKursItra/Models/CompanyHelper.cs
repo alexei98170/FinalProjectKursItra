@@ -8,7 +8,7 @@ namespace FinalProjectKursItra.Models
 {
     sealed public class CompanyHelper
     {
-        public static List<string> GetAllManualTags(int companyId, ApplicationDbContext context)
+        public static List<string> GetAllCompanyTags(int companyId, ApplicationDbContext context)
         {
             Company company = context.Companies.Find(companyId);
             List<CompanyTag> companyTags = context.CompanyTags.Where(t => t.CompanyId == companyId).ToList();
@@ -19,15 +19,20 @@ namespace FinalProjectKursItra.Models
             }
             return tags;
         }
-      
-      
-        public static List<CompanyTag> GetManualTags(int companyId, ApplicationDbContext context)
+
+        public static List<Comment> GetCompanyComments(int companyId, ApplicationDbContext context)
+        {
+            Company company = context.Companies.Find(companyId);
+            List<Comment> manualComments = context.Comments.Where(t => t.CompanyId == companyId).ToList();
+            return manualComments;
+        }
+        public static List<CompanyTag> GetCompanyTags(int companyId, ApplicationDbContext context)
         {
             Company company = context.Companies.Find(companyId);
             List<CompanyTag> manualTags = context.CompanyTags.Where(t => t.CompanyId == companyId).ToList();
             return manualTags;
         }
-        public static int CountSameNameManualTags(int CompanyTagId, ApplicationDbContext context)
+        public static int CountSameNameCompanyTags(int CompanyTagId, ApplicationDbContext context)
         {
             CompanyTag companyTag = context.CompanyTags.Find(CompanyTagId);
             Tag tag = context.Tags.Find(companyTag.TagId);

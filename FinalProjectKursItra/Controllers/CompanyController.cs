@@ -239,10 +239,10 @@ namespace FinalProjectKursItra.Controllers
             }
         private void DelEmptyTags(int id, ApplicationDbContext context)
         {
-            List<CompanyTag> manualTags = CompanyHelper.GetManualTags(id, context);
+            List<CompanyTag> manualTags = CompanyHelper.GetCompanyTags(id, context);
             foreach (CompanyTag mTag in manualTags)
             {
-                if (CompanyHelper.CountSameNameManualTags(mTag.CompanyTagId, context) < 2)
+                if (CompanyHelper.CountSameNameCompanyTags(mTag.CompanyTagId, context) < 2)
                 {
                     context.Tags.Remove(context.Tags.Find(mTag.TagId));
                 }

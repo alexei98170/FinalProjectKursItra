@@ -76,9 +76,26 @@ namespace FinalProjectKursItra.Controllers
             }
         }
 
-        public IActionResult Privacy()
+        public ActionResult ShowComments(Int32 manualId)
         {
-            return View();
+            ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
+            Company company = context.Companies.Find(manualId);
+            CompanyViewModel model = new CompanyViewModel()
+            {
+                Company = company,
+                User = user,
+                Tags = CompanyHelper.GetAllCompanyTags(company.CompanyId, context),
+                Comments = context.Comments.Where(c => c.CompanyId == company.CompanyId).ToList(),
+                Context = context
+            };
+            ActionResult actionResult = View("Manual", model);
+
+            if (company != null)
+            {
+                actionResult = PartialView("_Comments", model);
+            }
+
+            return actionResult;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -98,7 +115,7 @@ namespace FinalProjectKursItra.Controllers
                 Comments = context.Comments.Where(c => c.CompanyId == company.CompanyId).ToList(),
                 User = user,
                 Context = context,
-                Tags = CompanyHelper.GetAllManualTags(id, context)
+                Tags = CompanyHelper.GetAllCompanyTags(id, context)
             };
 
             return View(model);

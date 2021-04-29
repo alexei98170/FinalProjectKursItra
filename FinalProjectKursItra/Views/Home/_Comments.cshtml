@@ -1,0 +1,14 @@
+﻿@model List<FinalProjectKursItra.Models.Comment>
+
+
+<table class="table">
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
