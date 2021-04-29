@@ -29,14 +29,51 @@ namespace FinalProjectKursItra.Controllers
     
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(UserManager<ApplicationUser> userManager,
+          SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext)
+
         {
-            _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            context = dbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? tagId = null)
         {
-            return View();
+            List<Company> list = new List<Company>();
+            ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
+
+            if (tagId != null)
+            {
+                List<CompanyTag> companyTags = context.CompanyTags.Where(company => company.TagId == tagId).ToList();
+                foreach (CompanyTag company in companyTags)
+                {
+                    list.Add(context.Companies.Find(company.CompanyId));
+                }
+                list.Reverse();
+                HomeIndexViewModel newModel = new HomeIndexViewModel()
+                {
+                    TagId = tagId,
+                    Tags = context.Tags.ToList(),
+                    User = user,
+                    Companies = list,
+                    Context = context
+                };
+                return View(newModel);
+            }
+            else
+            {
+                list = context.Companies.ToList();
+                HomeIndexViewModel newModel = new HomeIndexViewModel()
+                {
+                    TagId = null,
+                    Tags = context.Tags.ToList(),
+                    User = user,
+                    Companies = list,
+                    Context = context
+                };
+                return View(newModel);
+            }
         }
 
         public IActionResult Privacy()
@@ -51,8 +88,8 @@ namespace FinalProjectKursItra.Controllers
         }
         public async Task<IActionResult> Company(int id, string userid)
         {
-
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByIdAsync(userid);
+            //var user = await _userManager.GetUserAsync(User);
             Company company = context.Companies.Find(id);
             ViewBag.userid = userid;
             CompanyViewModel model = new CompanyViewModel

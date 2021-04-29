@@ -101,7 +101,7 @@ namespace FinalProjectKursItra.Controllers
                     (model.Tags != "")
                 )
                 {
-                    Company manual = new Company()
+                    Company company = new Company()
                     {
                         AuthorId = model.AuthorId,
                         Title = mark.Transform(model.Title),
@@ -112,7 +112,7 @@ namespace FinalProjectKursItra.Controllers
                         LastUpdate = DateTime.Now
                     };
 
-                    EntityEntry<Company> e = _context.Companies.Add(manual);
+                    EntityEntry<Company> e = _context.Companies.Add(company);
                     _context.SaveChanges();
                     Company i = e.Entity;
 
@@ -154,7 +154,7 @@ namespace FinalProjectKursItra.Controllers
                         Tags = tags.ToList(),
 
                     };
-                    manual.Saved = true;
+                    company.Saved = true;
                     _context.SaveChanges();
                 }
 

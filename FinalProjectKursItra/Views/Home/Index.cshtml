@@ -1,8 +1,154 @@
-﻿@{
+﻿@model FinalProjectKursItra.ViewModels.HomeIndexViewModel;
+@using FinalProjectKursItra.Data;
+@{
     ViewData["Title"] = "Home Page";
 }
+@using Microsoft.AspNetCore.Identity
+@using FinalProjectKursItra.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="row">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <br />
+            <form asp-controller="Home" asp-action="Search" method="post">
+                <input type="text" class="submityy" name="substring" placeholder="Search" />
+                <input type="submit" class="submityyy" value="🔍" />
+            </form>
+
+            @if (Model.TagId != null)
+            {
+                <div>
+                    @{
+                        Tag tag = Model.Tags.Find(t => t.TagId == Model.TagId);
+                    }
+                </div>
+                <a asp-action="Index" asp-route-tagId="@Model.TagId" class="btn btn-info">@tag.Name</a>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-sm-8">
+            @foreach (Company company in Model.Companies)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="thumbnail" style="height: 100px; width:80px">
+                                    @{
+                                        String updateString = "";
+                                    }
+                                    @if ((company?.LastUpdate ?? null) != null)
+                                    {
+                                        updateString = String.Format("{2}.{1:d2}.{0:d2} {3}:{4:d2}", (company.LastUpdate.Year), company.LastUpdate.Month, company.LastUpdate.Day, company.LastUpdate.Hour, company.LastUpdate.Minute);
+                                    }
+                                    <img id="photo" style="height: 90px; width: 80px" src="@company.Photo">
+                                </div>
+                                <h4 style="color:deepskyblue;">@updateString</h4>
+                            </div>
+                            <div class="col-md-10">
+
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <a asp-controller="Home" asp-action="Company" asp-route-id="@company.CompanyId">
+                                        <h3>@Html.Raw(@company.Title)</h3>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <h3 style="color:deepskyblue;">@Html.Raw(@company.Title)</h3>
+                                }
+                                <span>
+                                    @{
+                                        List<CompanyTag> mTags = Model.Context.CompanyTags.Where(man => man.CompanyId == company.CompanyId).ToList();
+                                        List<Tag> tags = new List<Tag>();
+                                        foreach (CompanyTag mTag in mTags)
+                                        {
+                                            tags.Add(Model.Context.Tags.Find(mTag.TagId));
+                                        }
+                                    }
+                                    @foreach (Tag tag in tags)
+                                    {
+
+                                        {
+                                            FinalProjectKursItra.ViewModels.HomeIndexViewModel newModel =
+                                    new FinalProjectKursItra.ViewModels.HomeIndexViewModel { TagId = tag.TagId };
+                                        }
+
+                                        <a asp-action="Index" asp-route-tagId="@tag.TagId" class="btn btn-info btn-sm">@tag.Name</a>
+                                    }
+                                </span>
+                                <hr />
+                                <h5>@Html.Raw(@company.Description)</h5>
+                                <hr />
+                                <span style="text-align:right">
+                                    @if (User.IsInRole("admin"))
+                                    {
+                                        <a asp-controller="Profile" asp-action="Edit" asp-route-id="@company.CompanyId" class="btn btn-info btn-sm">Edit task</a>
+
+                                    }
+                                    <a class="btn btn-info btn-sm" asp-controller="Home" asp-action="ConvertToPdf" asp-route-manualId="@company.CompanyId">Save as PDF</a>
+                                </span>
+                                <div style="padding: 15px 0px 15px 0px;">
+
+                                    @String.Format("Рейтинг статьи: {0:f2}.", (float)((company.RatesCount != 0) ? (company.RatesAmount * 1.0f / company.RatesCount) : 0))
+                                    @if ((Model != null) && (Model.User != null))
+                                    {
+                                        <span>Your rating</span>
+                                        @for (Int16 i = 1; i <= 5; i++)
+                                        {
+                                            <form style="display:inline" action="/Home/Rate" method="POST">
+                                                <input type="hidden" name="userId" value="@Model.User.Id" />
+                                                <input type="hidden" name="companyId" value="@company.CompanyId" />
+                                                <input type="hidden" name="rateValue" value="@i" />
+                                                <input type="hidden" name="tagId" value="@Model.TagId" />
+                                                <input type="submit" class="submity" value="@i" />
+                                            </form>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+        <aside class="col-md-4 col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="panel-heading" style="background-color:deepskyblue;">
+                        <h3 class="panel-title">Categories</h3>
+                    </div>
+                    <hr />
+                    @foreach (ECategory cat in Enum.GetValues(typeof(ECategory)))
+                    {
+                        Int32 categoryId = (Int32)cat;
+                        @*<a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{
+                            "Категории", @Convert.ToInt32(cat).ToString() }}'>
+                        *@
+
+                        <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-route-category="@categoryId">
+                            <h5>@Html.DisplayFor(modelItem => cat)</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="panel-heading" style="background-color:deepskyblue">
+                        <h3 class="panel-title">Tags</h3>
+                    </div>
+                    <hr />
+                    @foreach (Tag tag in Model.Tags)
+                    {
+                        FinalProjectKursItra.ViewModels.HomeIndexViewModel newModel =
+                                        new FinalProjectKursItra.ViewModels.HomeIndexViewModel { TagId = tag.TagId };
+                        <a asp-action="Index" asp-route-tagId="@tag.TagId" class="btn btn-info btn-sm">@tag.Name</a>
+                    }
+                </div>
+            </div>
+        </aside>
+    </div>
