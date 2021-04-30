@@ -7,44 +7,58 @@
 @{
     ViewData["Title"] = "Company";
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Company</title>
-</head>
-<body>
-
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="thumbnail" style="height: 140px; width:140px">
-                        <img id="photo" style="height: 130px; width: 130px" src="@Model.Company.Photo">
-                    </div>
-                    <h5 style="color:deepskyblue;">@Model.Company.ReleaseDate</h5>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="thumbnail" style="height: 140px; width:140px">
+                    <img id="photo" style="height: 130px; width: 130px" src="@Model.Company.Photo">
                 </div>
-                <div class="col-md-10">
-                    <h2>@Html.Raw(@Model.Company.Title)</h2>
-                    <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
-                        <h4>Categories: @Html.DisplayFor(modelItem => Model.Company.Category)</h4>
-                    </a>
-                    <hr />
-                    @foreach (string tag in Model.Tags)
-                    {
-                        <button class="btn btn-info btn-sm">@tag</button>
-                    }
-                    <hr />
-                    <h5>@Html.Raw(@Model.Company.Description)</h5>
+                <h5 style="color:deepskyblue;">@Model.Company.ReleaseDate</h5>
+            </div>
+            <div class="col-md-10">
+                <h2>@Html.Raw(@Model.Company.Title)</h2>
+                <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
+                    <h4>Categories: @Html.DisplayFor(modelItem => Model.Company.Category)</h4>
+                </a>
+                <hr />
+                @foreach (string tag in Model.Tags)
+                {
+                    <button class="btn btn-info btn-sm">@tag</button>
+                }
+                <hr />
+                <h5>@Html.Raw(@Model.Company.Description)</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="reload" style="display:none">
+    <form asp-controller="Home" asp-action="ShowComments" data-ajax="true" data-ajax-method="POST" data-ajax-begin="onBegin" data-ajax-success="onSuccess" data-ajax-complete="onComplete">
+        <input type="hidden" name="companyId" value="@Model.Company.CompanyId" />
+        <input type="submit" value="Reload" class="btn btn-primary" id="reloadCommentsInput" />
+    </form>
+</div>
+<div id="comments">
+</div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-md-10">
+                        <b id="userName"><span class="glyphicon glyphicon-user"></span>@Model.User.UserName</b>
+                        <hr />
+                        <form asp-controller="Home" asp-action="AddComment">
+                            <textarea name="content" id="message" class="form-control" rows="6" value=""></textarea>
+                            <div class="form-group" hidden="hidden">
+                                <input name="userId" class="form-control" value="@Model.User.Id" />
+                                <input name="companyId" class="form-control" value="@Model.Company.CompanyId" />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Save" class="btn btn-default" style="color:blue; margin-top:10px;" />
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <a asp-controller="Comments" asp-action="Create">Create Comments</a>
-
-            @{await Html.RenderPartialAsync("/Views/Home/_Comments.cshtml", Model.Comments);}
         </div>
-        <a asp-action="Index">Back to List</a>
-    </div>
-</body>
-</html>

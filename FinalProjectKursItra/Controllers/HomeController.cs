@@ -75,7 +75,34 @@ namespace FinalProjectKursItra.Controllers
                 return View(newModel);
             }
         }
+        [HttpPost]
+        public ActionResult AddComment(string content, string userId, int companyId)
+        {
+            Comment toAdd = new Comment()
+            {
+                AuthorId = userId,
+                Content = mark.Transform(content),
+                CompanyId = companyId,
+                VoteCount = 0,
+                ReleaseDate = DateTime.Now
+            };
+            Company company = context.Companies.Find(companyId);
+            company.LastUpdate = DateTime.Now;
+            context.Comments.Add(toAdd);
+            context.SaveChanges();
+            CompanyViewModel model = new CompanyViewModel()
+            {
+                Company = company,
+                User = context.ApplicationUsers.Find(userId),
 
+                Tags = CompanyHelper.GetAllCompanyTags(companyId, context),
+                Comments = context.Comments.Where(c => c.CompanyId == companyId).ToList(),
+                Context = context
+
+
+            };
+            return View("Company", model);
+        }
         public ActionResult ShowComments(Int32 manualId)
         {
             ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
