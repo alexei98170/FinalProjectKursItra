@@ -147,5 +147,17 @@ namespace FinalProjectKursItra.Controllers
 
             return View(model);
         }
+        public IActionResult ShowCategoryCompanies(int category)
+        {
+            List<Company> companyList = context.Companies.Where(company => Convert.ToInt32(company.Category) == category).ToList();
+            HomeIndexViewModel newModel = new HomeIndexViewModel()
+            {
+                TagId = null,
+                Tags = context.Tags.ToList(),
+                Companies = companyList,
+                Context = context
+            };
+            return View("Index", newModel);
+        }
     }
 }

@@ -1,10 +1,6 @@
-﻿
-using FinalProjectKursItra.Models;
-using System;
+﻿using FinalProjectKursItra.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using FinalProjectKursItra.Data;
 
 namespace FinalProjectKursItra.ViewModels

@@ -1,9 +1,9 @@
 ﻿@model FinalProjectKursItra.ViewModels.CompanyViewModel
 @using FinalProjectKursItra.Data;
 @using Microsoft.AspNetCore.Identity;
-@using System.Web;
 @inject UserManager<ApplicationUser> UserManager
-@inject ApplicationDbContext db
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ApplicationDbContext context
 @{
     ViewData["Title"] = "Company";
 }
@@ -18,7 +18,7 @@
             </div>
             <div class="col-md-10">
                 <h2>@Html.Raw(@Model.Company.Title)</h2>
-                <a asp-controller="Home" asp-action="ShowCategoryManuals" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
+                <a asp-controller="Home" asp-action="ShowCategoryCompanies" asp-all-route-data='new Dictionary<string,string> {{"category", @Convert.ToInt32(Model.Company.Category).ToString() }}'>
                     <h4>Categories: @Html.DisplayFor(modelItem => Model.Company.Category)</h4>
                 </a>
                 <hr />
@@ -39,26 +39,28 @@
     </form>
 </div>
 <div id="comments">
+
 </div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="col-md-10">
-                        <b id="userName"><span class="glyphicon glyphicon-user"></span>@Model.User.UserName</b>
-                        <hr />
-                        <form asp-controller="Home" asp-action="AddComment">
-                            <textarea name="content" id="message" class="form-control" rows="6" value=""></textarea>
-                            <div class="form-group" hidden="hidden">
-                                <input name="userId" class="form-control" value="@Model.User.Id" />
-                                <input name="companyId" class="form-control" value="@Model.Company.CompanyId" />
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Save" class="btn btn-default" style="color:blue; margin-top:10px;" />
-                            </div>
-                        </form>
-                    </div>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-md-10">
+                    <b id="UserName"><span class="glyphicon glyphicon-user"></span>@Model.User.UserName</b>
+                    <hr />
+                    <form asp-controller="Home" asp-action="AddComment">
+                        <textarea name="content" id="message" class="form-control" rows="6" value=""></textarea>
+                        <div class="form-group" hidden="hidden">
+                            <input name="userId" class="form-control" value="@Model.User.Id" />
+                            <input name="companyId" class="form-control" value="@Model.Company.CompanyId" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-default" style="color:blue; margin-top:10px;" />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+}

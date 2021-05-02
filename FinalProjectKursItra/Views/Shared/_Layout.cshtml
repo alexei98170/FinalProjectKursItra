@@ -28,11 +28,13 @@
                             @if (User.IsInRole("member"))
                             {
                                 <li><a asp-area="" asp-controller="Company" asp-action="Index">My Company</a></li>
+                                <li><a asp-area="" asp-controller="Manage" asp-action="Index">My Profile</a></li>
                             }
                             @if (User.IsInRole("admin"))
                             {
                                 <li><a asp-area="" asp-controller="Users" asp-action="Index">Admin panel</a></li>
                                 <li><a asp-area="" asp-controller="Company" asp-action="Index">My Company</a></li>
+                                <li><a asp-area="" asp-controller="Manage" asp-action="Index">My Profile</a></li>
                             }
                         </ul>
                         @await Html.PartialAsync("_LoginPartial")
