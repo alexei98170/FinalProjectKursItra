@@ -26,11 +26,33 @@ namespace FinalProjectKursItra.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext context;
-    
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<ApplicationUser> userManager,
-          SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext)
+        public ActionResult ShowComments(Int32 manualId)
+        {
+            ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
+            Company company = context.Companies.Find(manualId);
+            CompanyViewModel model = new CompanyViewModel()
+            {
+                Company = company,
+                User = user,
+                Tags = CompanyHelper.GetAllCompanyTags(company.CompanyId, context),
+                Comments = context.Comments.Where(c => c.CompanyId == company.CompanyId).ToList(),
+                Context = context
+            };
+            ActionResult actionResult = View("Company", model);
+
+            if (company != null)
+            {
+                actionResult = PartialView("_Comments", model);
+            }
+
+            return actionResult;
+        }
+
+        public HomeController(
+            UserManager<ApplicationUser> userManager,
+          SignInManager<ApplicationUser> signInManager, 
+          ApplicationDbContext dbContext)
 
         {
             _userManager = userManager;
@@ -75,6 +97,18 @@ namespace FinalProjectKursItra.Controllers
                 return View(newModel);
             }
         }
+        public IActionResult ShowCategoryCompanies(int category)
+        {
+            List<Company> companyList = context.Companies.Where(company => Convert.ToInt32(company.Category) == category).ToList();
+            HomeIndexViewModel newModel = new HomeIndexViewModel()
+            {
+                TagId = null,
+                Tags = context.Tags.ToList(),
+                Companies = companyList,
+                Context = context
+            };
+            return View("Index", newModel);
+        }
         [HttpPost]
         public ActionResult AddComment(string content, string userId, int companyId)
         {
@@ -103,37 +137,10 @@ namespace FinalProjectKursItra.Controllers
             };
             return View("Company", model);
         }
-        public ActionResult ShowComments(Int32 manualId)
-        {
-            ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
-            Company company = context.Companies.Find(manualId);
-            CompanyViewModel model = new CompanyViewModel()
-            {
-                Company = company,
-                User = user,
-                Tags = CompanyHelper.GetAllCompanyTags(company.CompanyId, context),
-                Comments = context.Comments.Where(c => c.CompanyId == company.CompanyId).ToList(),
-                Context = context
-            };
-            ActionResult actionResult = View("Manual", model);
-
-            if (company != null)
-            {
-                actionResult = PartialView("_Comments", model);
-            }
-
-            return actionResult;
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
         public async Task<IActionResult> Company(int id, string userid)
         {
-            var user = await _userManager.FindByIdAsync(userid);
-            //var user = await _userManager.GetUserAsync(User);
+            //var user = await _userManager.FindByIdAsync(userid);
+            var user = await _userManager.GetUserAsync(User);
             Company company = context.Companies.Find(id);
             ViewBag.userid = userid;
             CompanyViewModel model = new CompanyViewModel
@@ -147,17 +154,6 @@ namespace FinalProjectKursItra.Controllers
 
             return View(model);
         }
-        public IActionResult ShowCategoryCompanies(int category)
-        {
-            List<Company> companyList = context.Companies.Where(company => Convert.ToInt32(company.Category) == category).ToList();
-            HomeIndexViewModel newModel = new HomeIndexViewModel()
-            {
-                TagId = null,
-                Tags = context.Tags.ToList(),
-                Companies = companyList,
-                Context = context
-            };
-            return View("Index", newModel);
-        }
+        
     }
 }

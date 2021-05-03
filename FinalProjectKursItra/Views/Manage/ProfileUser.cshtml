@@ -1,0 +1,28 @@
+﻿@{ 
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@model FinalProjectKursItra.Models.ManageViewModels.IndexViewModel
+<div class="row">
+    <div class="col-md-6">
+        <h1>Information about user</h1>
+        <h3>Username - @Model.Username</h3>
+        <br/>
+        <br/>
+        <h3>Email - @Model.Email</h3>
+        <br/>
+        @if (Model.PhoneNumber != null)
+        {
+            <h3>PhoneNumber - @Model.PhoneNumber</h3>
+            <br/>
+        }
+        @if (Model.Skype != null)
+        {
+            <h3>Skype - @Model.Skype</h3>
+            <br/>
+        }
+        @if (Model.Information != null)
+        {
+            <h3>Information - @Model.Information</h3>
+        }
+    </div>
+</div>
