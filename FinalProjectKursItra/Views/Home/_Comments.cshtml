@@ -17,13 +17,8 @@
                     <hr />
                     <p>@Html.Raw(@comment.Content)</p>
                 </div>
-                <div class="col-md-12">
-                    <a asp-controller="Home" asp-action="LikeComment" asp-all-route-data='new Dictionary<string,string>
-                       { { "userId", @Model.User.Id}, {"commentId", @comment.CommentId.ToString()} }' class="navbar-brand">
-                        <span class="glyphicon glyphicon-heart">@comment.VoteCount</span>
-                    </a>
                 </div>
             </div>
-        </div>
+        
     }
 </div>

@@ -27,10 +27,10 @@ namespace FinalProjectKursItra.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext context;
 
-        public ActionResult ShowComments(Int32 manualId)
+        public ActionResult ShowComments(Int32 companyId)
         {
             ApplicationUser user = (_userManager.GetUserAsync(User)).Result;
-            Company company = context.Companies.Find(manualId);
+            Company company = context.Companies.Find(companyId);
             CompanyViewModel model = new CompanyViewModel()
             {
                 Company = company,

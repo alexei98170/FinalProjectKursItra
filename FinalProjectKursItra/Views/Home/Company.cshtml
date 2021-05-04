@@ -32,15 +32,6 @@
         </div>
     </div>
 </div>
-<div id="reload" style="display:none">
-    <form asp-controller="Home" asp-action="ShowComments" data-ajax="true" data-ajax-method="POST" data-ajax-begin="onBegin" data-ajax-success="onSuccess" data-ajax-complete="onComplete">
-        <input type="hidden" name="companyId" value="@Model.Company.CompanyId" />
-        <input type="submit" value="Reload" class="btn btn-primary" id="reloadCommentsInput" />
-    </form>
-</div>
-<div id="comments">
-
-</div>
 @if (User.Identity.IsAuthenticated)
 {
     <div class="row">
@@ -63,4 +54,37 @@
             </div>
         </div>
     </div>
+}
+<div id="reload" style="display:none">
+    <form asp-controller="Home" asp-action="ShowComments" data-ajax="true" data-ajax-method="POST" data-ajax-begin="onBegin" data-ajax-success="onSuccess" data-ajax-complete="onComplete">
+        <input type="hidden" name="companyId" value="@Model.Company.CompanyId" />
+        <input type="submit" value="Reload" class="btn btn-primary" id="reloadCommentsInput" />
+    </form>
+</div>
+<div id="comments">
+
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.js"></script>
+    <script type="text/javascript">
+        var loadFunction = function () {
+            var elem = document.getElementById('reloadCommentsInput');
+            console.log('Reloaded.');
+            elem.click()
+        }
+        setInterval(loadFunction, 5000);
+        window.onload = loadFunction;
+        var results = $("#comments");
+        var onBegin = function () {
+        };
+        var onComplete = function () {
+        };
+        var onSuccess = function (context) {
+            var elem = document.getElementById('comments');
+            elem.innerHTML = context;
+        };
+        var onFailed = function (context) {
+        };
+    </script>
 }
