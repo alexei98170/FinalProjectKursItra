@@ -28,9 +28,12 @@ namespace FinalProjectKursItra.Controllers
             StrictBoldItalic = true
         });
 
-        public NewsController(ApplicationDbContext context)
+        public NewsController(UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _context = dbContext;
         }
 
         // GET: News
@@ -83,7 +86,7 @@ namespace FinalProjectKursItra.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ActionName("CreateNews")]
         public async Task<IActionResult> CreateNews(CreateNewsViewModel model)
         {
             CreateViewModelForNews newModel = new CreateViewModelForNews();
@@ -120,7 +123,7 @@ namespace FinalProjectKursItra.Controllers
                 _context.SaveChanges();
             }
 
-            return View("Create");
+            return View("Create", newModel);
         }
 
         // GET: News/Edit/5
