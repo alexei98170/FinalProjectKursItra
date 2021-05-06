@@ -13,9 +13,11 @@
                     @if (author != null)
                     {
                         <a class="glyphicon glyphicon-user" asp-controller="Manage" asp-action="ProfileUser" asp-route-userId="@author.Id">@author.UserName</a>
+
                     }
                     <hr />
                     <p>@Html.Raw(@comment.Content)</p>
+                    
                 </div>
                 </div>
             </div>
