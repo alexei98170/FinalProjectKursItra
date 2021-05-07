@@ -28,8 +28,10 @@ namespace FinalProjectKursItra.Controllers
             StrictBoldItalic = true
         });
 
-        public NewsController(UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext)
+        public NewsController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager, 
+        ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -81,10 +83,7 @@ namespace FinalProjectKursItra.Controllers
             };
             return View(model);
         }
-
-        // POST: News/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ActionName("CreateNews")]
         public async Task<IActionResult> CreateNews(CreateNewsViewModel model)
