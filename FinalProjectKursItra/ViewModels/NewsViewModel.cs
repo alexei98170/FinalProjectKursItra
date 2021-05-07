@@ -1,4 +1,5 @@
-﻿using FinalProjectKursItra.Models;
+﻿using FinalProjectKursItra.Data;
+using FinalProjectKursItra.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace FinalProjectKursItra.ViewModels
 {
-    public class CreateViewModelForNews
+    public class NewsViewModel
     {
-        [Required]
-        public string AuthorId { get; set; }
-        public string CompanyId { get; set; }
+
+        [Key]
         public News News { get; set; }
+        public ApplicationDbContext Context { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

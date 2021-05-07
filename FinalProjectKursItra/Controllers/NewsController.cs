@@ -80,6 +80,7 @@ namespace FinalProjectKursItra.Controllers
             {
                 News = null,
                 AuthorId = id,
+                CompanyId = id,
             };
             return View(model);
         }
@@ -101,6 +102,7 @@ namespace FinalProjectKursItra.Controllers
                 News news = new News()
                 {
                     AuthorId = model.AuthorId,
+                    CompanyId = model.CompanyId,
                     Title = mark.Transform(model.Title),
                     Description = mark.Transform(model.Description),
                     Photo = model.Photo,
@@ -116,6 +118,7 @@ namespace FinalProjectKursItra.Controllers
                 {
                     News = i,
                     AuthorId = i.AuthorId,
+                    CompanyId = i.CompanyId,
 
                 };
                 news.Saved = true;
@@ -206,6 +209,21 @@ namespace FinalProjectKursItra.Controllers
         private bool NewsExists(int id)
         {
             return _context.News.Any(e => e.NewsId == id);
+        }
+        public async Task<IActionResult> News(int id, string companyid)
+        {
+            //var user = await _userManager.FindByIdAsync(userid);
+            var user = await _userManager.GetUserAsync(User);
+            News news = _context.News.Find(id);
+            ViewBag.companyid = companyid;
+            NewsViewModel model = new NewsViewModel
+            {
+                News = news,
+                User = user,
+                Context = _context,
+            };
+
+            return View(model);
         }
     }
 }

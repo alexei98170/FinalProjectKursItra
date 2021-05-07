@@ -1,0 +1,28 @@
+﻿@model FinalProjectKursItra.ViewModels.NewsViewModel
+@using FinalProjectKursItra.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ApplicationDbContext context
+@{
+    ViewData["Title"] = "Company";
+}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="thumbnail" style="height: 140px; width:140px">
+                    <img id="photo" style="height: 130px; width: 130px" src="@Model.News.Photo">
+                </div>
+                <h5 style="color:deepskyblue;">@Model.News.ReleaseDate</h5>
+            </div>
+            <div class="col-md-10">
+                <h2>@Html.Raw(@Model.News.Title)</h2>
+                <hr />
+              
+                <h5>@Html.Raw(@Model.News.Description)</h5>
+            </div>
+        </div>
+    </div>
+</div>

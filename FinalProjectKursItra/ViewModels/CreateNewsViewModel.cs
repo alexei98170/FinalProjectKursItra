@@ -10,6 +10,8 @@ namespace FinalProjectKursItra.ViewModels
     {
         [Required(ErrorMessage = "You have entered incorrect data")]
         public string AuthorId { get; set; }
+        [Required(ErrorMessage = "You have entered incorrect data")]
+        public string CompanyId { get; set; }
         [Required]
         public string Title { get; set; }
         [Required(ErrorMessage = "You have entered incorrect data")]
@@ -17,6 +19,7 @@ namespace FinalProjectKursItra.ViewModels
         public string Description { get; set; }
 
         public string Photo { get; set; }
+
        
     }
 }

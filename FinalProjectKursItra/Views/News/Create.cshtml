@@ -6,10 +6,11 @@
 <a asp-action="Index">Back</a>
 <hr />
 @{
-    string id = Model.AuthorId;
+    string authorId = Model.AuthorId;
+    string companyId = Model.CompanyId;
 }
 <div class="row">
     @{
-        Html.RenderPartial("_CreateNews", new FinalProjectKursItra.ViewModels.CreateNewsViewModel() { AuthorId = id, });
+        Html.RenderPartial("_CreateNews", new FinalProjectKursItra.ViewModels.CreateNewsViewModel() { AuthorId = Model.AuthorId, CompanyId = Model.CompanyId, });
     }
 </div>
