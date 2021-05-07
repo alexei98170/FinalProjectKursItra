@@ -14,13 +14,13 @@
                 <h3 class="panel-title">Company News</h3>
             </div>
             <table class="table">
-                @{ var news = db.News.Where(news => news.AuthorId == Model.Id);
-
+                @{ var news = db.News.Where(news => news.CompanyId == Model.Id);
+                    
                 }
                 @foreach (var newS in news)
                 {
                     <tr>
-                        <td><a asp-controller="News" asp-action="News" asp-route-id="@newS.NewsId">@Html.Raw(newS.Title)</a></td>
+                        <td><a asp-controller="News" asp-action="Index" asp-route-id="@newS.NewsId">@Html.Raw(newS.Title)</a></td>
                        
                     </tr>
                 }
