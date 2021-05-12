@@ -4,23 +4,27 @@
     <h3>Comments:</h3>
     @foreach (Comment comment in Model.Comments)
     {
-        <div class="panel panel-default">
-            <div class="panel-body">
-                @{
-                    ApplicationUser author = Model.Context.ApplicationUsers.Find(comment.AuthorId);
-                }
-                <div class="col-md-11">
-                    @if (author != null)
-                    {
-                        <a class="glyphicon glyphicon-user" asp-controller="Manage" asp-action="ProfileUser" asp-route-userId="@author.Id">@author.UserName</a>
+<div class="panel panel-default">
+    <div class="panel-body">
+        @{
+            ApplicationUser author = Model.Context.ApplicationUsers.Find(comment.AuthorId);
+        }
+        <div class="col-md-11">
+            @if (author != null)
+            {
+                <a class="glyphicon glyphicon-user" asp-controller="Manage" asp-action="ProfileUser" asp-route-userId="@author.Id">@author.UserName</a>
 
-                    }
-                    <hr />
-                    <p>@Html.Raw(@comment.Content)</p>
-                    
-                </div>
-                </div>
-            </div>
-        
+            }
+            <hr />
+            <p>@Html.Raw(@comment.Content)</p>
+        </div>
+        <div class="col-md-12">
+            <a asp-controller="Home" asp-action="LikeComment" asp-all-route-data='new Dictionary<string,string>
+                       { { "userId", @Model.User.Id}, {"commentId", @comment.CommentId.ToString()} }' class="navbar-brand">
+                <span class="glyphicon glyphicon-heart">@comment.VoteCount</span>
+            </a>
+        </div>
+    </div>
+</div>
     }
 </div>

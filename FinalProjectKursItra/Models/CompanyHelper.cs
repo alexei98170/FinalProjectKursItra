@@ -39,5 +39,16 @@ namespace FinalProjectKursItra.Models
             List<CompanyTag> manualTags = context.CompanyTags.Where(t => t.TagId == tag.TagId).ToList();
             return manualTags.Count();
         }
+        public static List<string> GetAllManualTags(int companyId, ApplicationDbContext context)
+        {
+            Company company = context.Companies.Find(companyId);
+            List<CompanyTag> companyTags = context.CompanyTags.Where(t => t.CompanyId == companyId).ToList();
+            List<string> tags = new List<string>();
+            foreach (CompanyTag man in companyTags)
+            {
+                tags.Add(context.Tags.Find(man.TagId).Name);
+            }
+            return tags;
+        }
     }
 }

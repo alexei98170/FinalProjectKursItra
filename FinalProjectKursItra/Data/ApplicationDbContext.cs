@@ -19,6 +19,7 @@ namespace FinalProjectKursItra.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<CompanyTag> CompanyTags { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<Vote> Votes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {

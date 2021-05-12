@@ -109,6 +109,32 @@ namespace FinalProjectKursItra.Controllers
             };
             return View("Index", newModel);
         }
+        public IActionResult LikeComment(string userId, int commentId, string path)
+        {
+            Comment comment = context.Comments.Find(commentId);
+
+            if (context.Votes.Where(c => c.CommentId == commentId && c.UserId == userId).ToList().Count == 0)
+            {
+                comment.VoteCount++;
+                Vote vote = new Vote()
+                {
+                    CommentId = commentId,
+                    UserId = userId,
+                };
+                context.Votes.Add(vote);
+            }
+            Company company = context.Companies.Find(comment.CompanyId);
+            context.SaveChanges();
+            CompanyViewModel model = new CompanyViewModel()
+            {
+                Company = company,
+                User = context.ApplicationUsers.Find(userId),
+                Tags = CompanyHelper.GetAllManualTags(company.CompanyId, context),
+                Comments = context.Comments.Where(c => c.CompanyId == company.CompanyId).ToList(),
+                Context = context
+            };
+            return View("Company", model);
+        }
         [HttpPost]
         public ActionResult AddComment(string content, string userId, int companyId)
         {

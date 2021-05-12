@@ -110,7 +110,7 @@ namespace FinalProjectKursItra.Controllers
                     LastUpdate = DateTime.Now
                 };
 
-                EntityEntry<News> e = _context.News.Add(news);
+                EntityEntry<News> e = await _context.News.AddAsync(news);
                 _context.SaveChanges();
                 News i = e.Entity;
 
