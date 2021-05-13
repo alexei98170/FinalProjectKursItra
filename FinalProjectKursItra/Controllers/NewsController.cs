@@ -38,7 +38,6 @@ namespace FinalProjectKursItra.Controllers
             _context = dbContext;
         }
 
-        // GET: News
         public async Task<IActionResult> Index()
         {
             var news = _context.News.Where(i => i.Saved == false).ToList();

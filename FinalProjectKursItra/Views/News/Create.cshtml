@@ -11,6 +11,6 @@
 }
 <div class="row">
     @{
-        Html.RenderPartial("_CreateNews", new FinalProjectKursItra.ViewModels.CreateNewsViewModel() { AuthorId = Model.AuthorId, CompanyId = Model.CompanyId, });
+        await  Html.RenderPartialAsync("_CreateNews", new FinalProjectKursItra.ViewModels.CreateNewsViewModel() { AuthorId = Model.AuthorId, CompanyId = Model.CompanyId, });
     }
 </div>
